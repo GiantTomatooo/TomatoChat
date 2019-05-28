@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=0">
+    <title>登录番信</title>
+    <link th:href="@{libs/css/bootstrap.css}" rel="stylesheet">
+    <script th:src="@{libs/js/jquery-3.3.1.min.js}" type="text/javascript"></script>
+    <script th:src="@{libs/plugins/layer/layer.js}"type="text/javascript"></script>
+    <script th:src="@{libs/js/bootstrap.js}"type="text/javascript"></script>
+    <script th:src="@{libs/js/vue.js}"type="text/javascript"></script>
+</head>
+<body>
+<div id="app" class="container">
+    <div class="loginForm col-sm-offset-3 col-sm-6">
+        <h3 class="form-title text-center">登录番信</h3>
+        <form class="form-horizontal col-sm-offset-1">
+            <div class="form-group has-feedback">
+                <label for="username" class="col-sm-2 control-label">账号:</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control" placeholder="账号" id="username" v-model="username">
+                    <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                </div>
+            </div>
+            <div class="form-group has-feedback">
+                <label for="password" class="col-sm-2 control-label">密码:</label>
+                <div class="col-sm-7">
+                    <input type="password" class="form-control" id="password" placeholder="密码" v-model="password">
+                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="checkbox col-sm-offset-2">
+                    <label>
+                        <input type="checkbox"> Remember me
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-3">
+                    <button type="button" class="btn btn-primary btn-block btn-flat" @click="login">登录</button>
+                </div>
+                <div class="col-sm-offset-1 col-sm-3">
+                    <button type="button" class="btn btn-primary btn-block btn-flat" @click="register">注册</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+<script th:src="@{libs/js/spider.js}"type="text/javascript"></script>
+<style>
+    .loginForm{
+        box-shadow: 0 0 20px white;
+        margin-top: 30px;
+        border-radius: 10px;
+        padding: 10px 0;
+        color: white;
+    }
+</style>
+<script type="text/javascript">
+    var vue = new Vue({
+        el: '#app',
+        data: {
+            username: '',
+            password: ''
+        },
+        methods: {
+            login: function () {
+                if (vue.username == '') {
+                    layer.alert("用户名不能为空！")
+                    return;
+                }
+                if (vue.password == '') {
+                    layer.alert("密码不能为空！");
+                    return;
+                }
+                if (vue.username.length > 16) {
+                    layer.alert("请输入长度小于16的的用户名!")
+                    return;
+                }
+                if (vue.password.length > 16) {
+                    layer.alert("请输入长度小于16的的密码!");
+                    return;
+                }
+                var data = {
+                    username: vue.username,
+                    password: vue.password
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "/login",
+                    data: data,
+                    dataType: "JSON",
+                    success: function (msg) {
+                        if (msg.code==0) {
+                            parent.location.href = '/index';
+                        } else {
+                            layer.alert(msg.msg);
+                        }
+                        console.log(msg);
+                    },
+                    error: function (msg) {
+                        console.log("print:...")
+                        console.log(msg);
+                        layer.alert("error");
+                    }
+                });
+            },
+            register: function () {
+                window.location.href = 'register';
+            },
+            getRandAccount: function () {
+                $.ajax({
+                    type: "POST",
+                    url: "user/getRandAccount",
+                    dataType: "JSON",
+                    success: function (msg) {
+                        if (msg.state = 'success') {
+                            vue.username = msg.username;
+                            vue.password = msg.password;
+                            vue.login();
+                        } else {
+                            layer.alert(msg.message);
+                        }
+                    },
+                    error: function (mes) {
+                        console.log("print:...")
+                        console.log(msg);
+                        layer.alert("error");
+                    }
+                });
+            }
+        }
+    })
+</script>
+</html>

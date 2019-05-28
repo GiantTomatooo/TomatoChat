@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=0">
+    <title>注册账号</title>
+    <link th:href="@{libs/css/bootstrap.css}" rel="stylesheet">
+    <script th:src="@{libs/js/jquery-3.3.1.min.js}"></script>
+    <script th:src="@{libs/plugins/layer/layer.js}"type="text/javascript"></script>
+    <script th:src="@{libs/js/bootstrap.js}"></script>
+    <script th:src="@{libs/js/vue.js}"></script>
+</head>
+<body>
+<div id="app" class="container">
+    <div class="registerForm col-sm-offset-3 col-sm-6">
+        <h3 class="text-center">注册番信账号</h3>
+        <form class="form-horizontal col-sm-offset-1">
+            <div class="form-group has-feedback">
+                <label for="username" class="col-sm-2 control-label">账号:</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control" placeholder="账号" id="username" v-model="username">
+                    <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                </div>
+            </div>
+            <div class="form-group has-feedback">
+                <label for="password" class="col-sm-2 control-label">密码:</label>
+                <div class="col-sm-7">
+                    <input type="password" class="form-control" id="password" placeholder="密码" v-model="password">
+                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-3">
+                    <button type="button" class="btn btn-success btn-block btn-flat" @click="register">注册账号</button>
+                </div>
+                <div class="col-sm-4">
+                    <button type="button" class="btn btn-primary btn-block btn-flat" @click="toLogin">返回登录界面</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+<script th:src="@{libs/js/spider.js}"type="text/javascript"></script>
+<style>
+    .registerForm{
+        box-shadow: 0 0 20px white;
+        margin-top: 30px;
+        border-radius: 10px;
+        padding: 10px 0;
+        color: white;
+    }
+</style>
+<script>
+    var vue = new Vue({
+        el: '#app',
+        data: {
+            username: '',
+            password: ''
+        },
+        methods: {
+            register: function () {
+                if (vue.username == '') {
+                    layer.alert("用户名不能为空！",{
+                        title:'提示',
+                        icon:7,
+                        shade:0.8,
+                        moveType:1,
+                        btn:['知道了'],
+                    });
+                    return;
+                }
+                if (vue.password == '') {
+                    layer.alert("密码不能为空！",{
+                        title:'提示',
+                        icon:7,
+                        shade:0.8,
+                        moveType:1,
+                        btn:['知道了'],
+                    });
+                    return;
+                }
+                if (vue.username.length > 16) {
+                    layer.alert("请输入长度小于16的的用户名!",{
+                        title:'提示',
+                        icon:7,
+                        shade:0.8,
+                        moveType:1,
+                        btn:['知道了'],
+                    });
+                    return;
+                }
+                if (vue.password.length > 16) {
+                    layer.alert("请输入长度小于16的的密码!",{
+                        title:'提示',
+                        icon:7,
+                        shade:0.8,
+                        moveType:1,
+                        btn:['知道了'],
+                        yes:function () {
+                            window.location.href = '/register';
+                        }
+                    });
+                    return;
+                }
+                var data = {
+                    username: vue.username,
+                    password: vue.password
+                };
+                $.ajax({
+                    type: "POST",
+                    url: "user/register",
+                    data: data,
+                    dataType: "JSON",
+                    success: function (message) {
+                        if (message.code==0) {
+                            layer.alert("注册成功",{
+                                title:'提示',
+                                icon:6,
+                                shade:0.8,
+                                moveType:1,
+                                btn:['返回登录页面','继续注册账号'],
+                                yes:function () {
+                                    window.location.href = '/login.html';
+                                },
+                                btn2:function () {
+                                    window.location.href = '/register';
+                                }
+                            });
+                        } else {
+                            layer.alert(message.msg,{
+                                title:'提示',
+                                icon:5,
+                                shade:0.8,
+                                moveType:1,
+                                btn:['知道了'],
+                                yes:function () {
+                                    window.location.href = '/register';
+                                },
+                            });
+                        }
+                        console.log(message);
+                    },
+                    error: function (message) {
+                        layer.alert("error");
+                        console.log(message);
+                    }
+                });
+            },
+            toLogin: function () {
+                window.location.href = "/login.html";
+            }
+        }
+    })
+</script>
+</html>

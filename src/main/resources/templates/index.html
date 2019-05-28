@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=0">
+    <title>番信1.0</title>
+    <link th:href="@{libs/css/bootstrap.css}" rel="stylesheet">
+    <link th:href="@{libs/plugins/layui-v2.4.5/layui/css/layui.css}" rel="stylesheet">
+    <script th:src="@{libs/js/jquery-3.3.1.min.js}"></script>
+    <script th:src="@{libs/plugins/layer/layer.js}"type="text/javascript"></script>
+    <script th:src="@{libs/plugins/layui-v2.4.5/layui/layui.js}"></script>
+    <script th:src="@{libs/js/bootstrap.js}"></script>
+    <script th:src="@{libs/js/vue.js}"></script>
+    <script th:src="@{libs/js/sockjs.min.js}"></script>
+    <script th:src="@{libs/js/stomp.min.js}"></script>
+</head>
+<body>
+<div id="app">
+    <div class="tomato_IM">
+        <div class="tomato_info">
+            <p th:text="${user.username}">用户名</p>
+        </div>
+        <div class="tomato_tab">
+            <ul class="tomato_tablist">
+                <li>
+                    <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                </li>
+            </ul>
+        </div>
+        <div class="tomato_content">
+            <ul class="tomato_friendlist" th:each="friend:${friends}">
+                <li th:text="${friend.username}">好友一</li>
+            </ul>
+<!--            <ul class="tomato_friendlist" >-->
+<!--                <li>1</li>-->
+<!--                <li>2</li>-->
+<!--                <li>3</li>-->
+<!--            </ul>-->
+        </div>
+        <div class="tomato_tools">
+            <ul>
+                <li><span class="glyphicon glyphicon-search" aria-hidden="true"></span></li>
+                <li><span class="glyphicon glyphicon-send" aria-hidden="true"></span></li>
+            </ul>
+        </div>
+    </div>
+    <div class="chat_page">
+        <div class="chat_list">
+        </div>
+        <div class="tomato_chat">
+            <div class="tomato_chat_title" >
+                <div><p></p></div>
+                <div>
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </div>
+            </div>
+            <div class="tomato_chat_panel">
+
+            </div>
+            <div class="tomato_chat_tool">
+                <i class="layui-icon layui-icon-face-smile-b"></i>
+                <i class="layui-icon layui-icon-picture"></i>
+                <i class="layui-icon layui-icon-file"></i>
+                <i class="layui-icon layui-icon-headset"></i>
+                <i class="layui-icon layui-icon-video"></i>
+            </div>
+            <div class="tomato_textarea">
+                <textarea cols="66" rows="4"></textarea>
+            </div>
+            <div class="tomato_footer">
+                <button onclick="sendMessage()">发送</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="test"></div>
+</body>
+<link th:href="@{css/index.css}" rel="stylesheet">
+<script th:src="@{libs/js/spider.js}"type="text/javascript"></script>
+<script th:src="@{js/index.js}"type="text/javascript"></script>
+<script th:src="@{js/index.js}"type="text/javascript"></script>
+</html>
