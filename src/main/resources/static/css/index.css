@@ -112,6 +112,13 @@ li{
     overflow: auto;
     border: 1px solid darkgray;
     border-radius: 10px;
+    padding: 4px;
+    display: none;
+}
+.layui-icon-face-smile-b>div>p{
+    width: 24px;
+    float: left;
+    font-size: 23px;
 }
 .layui-icon-face-smile-b>div::-webkit-scrollbar {/*滚动条整体样式*/
     width: 10px;     /*高宽分别对应横竖滚动条的尺寸*/
@@ -310,6 +317,7 @@ li{
     height: 12%;
     overflow: hidden;
     margin: auto;
+    font-size: 14px;
 }
 .tomato_textarea>textarea{
     resize: none;
