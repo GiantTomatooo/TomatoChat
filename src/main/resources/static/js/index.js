@@ -1,25 +1,13 @@
-var dom=$('.tomato_chat');
+var chatWindow=$('.tomato_chat');
 var username=$('.tomato_info>p').text();
 var accepter='';
-// var friendID=0;
-// for(;friendID<$('.tomato_friendlist>li').length;friendID++){
-//     $('.tomato_friendlist>li').eq(friendID).attr('id',friendID);
-// }
-dom.hide();
+chatWindow.hide();
 $('body').off('click').on('click','.tomato_friendlist>li',function () {
-    console.log('ppp');
     if($('.chat_page').css('display')=='none'){
         $('.chat_page').show();
     }
     var selectName=$(this).text();
     accepter=selectName;
-    // var flag=-1;
-    // var listLength=$('.chat_list>div').length;
-    // for(var i=0;i<listLength;i++){
-    //     if($('.chat_list>div').eq(i).text()==selectName){
-    //         flag=i;break;
-    //     }
-    // }
     var ele1=$('#list'+selectName);
     $('.chat_list>div').removeClass('tomato_active');
     if(ele1.length==0){
@@ -30,27 +18,18 @@ $('body').off('click').on('click','.tomato_friendlist>li',function () {
     var ele2=$('#chat'+selectName);
     $('.tomato_chat').hide();
     if(ele2.length==0){
-        $('.chat_page').append(dom.clone(true).show().attr('id','chat'+selectName));
+        $('.chat_page').append(chatWindow.clone(true).show().attr('id','chat'+selectName));
         $('#chat'+selectName+'>.tomato_chat_title>div>p').text(selectName);
     }else{
         ele2.show();
     }
-    //
-    // if(flag==-1){
-    //     $('.chat_list>div').removeClass('tomato_active');
-    //     $('.chat_list').append('<div class="tomato_active"><span>'+selectName+'</span><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></div>');
-    // }else{
-    //     $('.chat_list>div').removeClass('tomato_active');
-    //     $('.chat_list>div').eq(flag).addClass('tomato_active').show();
-    // }
-    // if(flag==-1){
-    //     $('.tomato_chat').hide();
-    //     $('.chat_page').append(dom.clone(true).show());
-    //     $('.tomato_chat_title>div>p').eq(listLength+1).text(selectName);
-    // }else{
-    //     $('.tomato_chat').hide();
-    //     $('.tomato_chat').eq(flag+1).show();
-    // }
+    if($('.chat_list>div').length==1){
+        $('.chat_list').hide();
+        $('.chat_page').css({width:487});
+    }else{
+        $('.chat_list').show();
+        $('.chat_page').css({width:651});
+    }
 });
 $('body').on('click','.chat_list>div',function(e){
     accepter=$(this).text();
@@ -66,9 +45,7 @@ $('body').on('click','.chat_list>div',function(e){
                     $('.chat_list>div').eq(1).addClass('tomato_active');
                 }
             }else{//否则打开上一个窗口
-                // var t=$(this).pre().attr('id').split('list')[1];
                 var t=$('.chat_list>div').eq(index-1).attr('id').split('list')[1];
-                // $('.tomato_chat').eq(index).show();
                 $('#chat'+t).show();
                 $(this).prev().addClass('tomato_active');
             }
@@ -78,34 +55,73 @@ $('body').on('click','.chat_list>div',function(e){
         if($('.chat_list>div').length==0){
             $('.chat_page').hide();
         }
-        // for(var i=0;i<$('.chat_list>div').length;i++){
-        //     if($('.chat_list>div').eq(i).css('display')!='none'){
-        //         return;
-        //     }
-        // }
-    }else{//
+    }else{
         $('.chat_list>div').removeClass('tomato_active');
         $('.chat_list>div').eq(index).addClass('tomato_active');
         $('.tomato_chat').hide();
         $('#chat'+n).show();
     }
+    if($('.chat_list>div').length==1){
+        $('.chat_list').hide();
+        $('.chat_page').css({width:487});
+    }else{
+        $('.chat_list').show();
+        $('.chat_page').css({width:651});
+    }
 });
 $('.tomato_tools li:first-of-type').click(function () {
-    layer.prompt({
-        title:'请输入用户名'
-    },function (val,index) {
-        layer.msg('用户添加成功');
-        layer.close(index);
-    });
+
 });
-$('.tomato_tools li:last-of-type').click(function () {
-    layer.confirm('确认退出账号？',{
-        icon:3,
-        title:'警告'
-    },function (index) {
-        layer.msg('退出成功');
-        layer.close(index);
-    });
+$('.tomato_tools>i').click(function () {
+    var index=$(this).index();
+    if(index==0){
+        layer.prompt({
+            title:'查找好友'
+        },function (val,index) {
+            if(val==username){
+                layer.alert('不可添加自己为好友!');
+                layer.close(index);
+                return;
+            }
+            var flag=false;
+            $('.tomato_content>ul>li').each(function (index) {
+                if(this.innerText==val){
+                    layer.alert(val+'已经是您的好友！！！');
+                    flag=true;
+                    return;
+                }
+            });
+            layer.close(index);
+            if(flag){
+                return;
+            }
+            var message={'state':'add_friend','sender':username,'accepter':val};
+            message=JSON.stringify(message);
+            console.log('发送消息'+message);
+            websocket.send(message);
+        });
+    }else if(index==1){
+        layer.alert("换肤功能正在开发中。。。");
+    }else{
+        layer.confirm('确认退出账号？',{
+            icon:3,
+            title:'警告'
+        },function (index) {
+            websocket.close();
+            location.href='login.html';
+            layer.close(index);
+        });
+    }
+});
+$('.tomato_chat_title>div:last-child>span').click(function () {
+    $('.chat_page').hide();
+    $('.chat_list>div').remove();
+});
+$(document).on('mouseover','.chat_list>div',function () {
+    $(this).children('div>span:last-of-type').show();
+});
+$(document).on('mouseout','.chat_list>div',function () {
+    $('.chat_list>div>span:last-of-type').hide();
 });
 function dragPanelMove(downDiv,moveDiv) {
     $(downDiv).mousedown(function (e) {
@@ -136,20 +152,52 @@ websocket.onmessage=function (ev) {
     if(msg.state=='chat'){
         console.log(msg);
         var ele=$('#chat'+msg.accepter);
-        // $('.tomato_chat').hide();
         if(ele.length==0){
-            $('.chat_page').append(dom.clone(true).attr('id','chat'+msg.accepter));
+            $('.chat_page').append(chatWindow.clone(true).attr('id','chat'+msg.accepter));
             $('#chat'+msg.accepter+'>.tomato_chat_title>div>p').text(msg.accepter);
         }
-        // else{
-        //     ele.show();
-        // }
-        addChatPanel(msg.accepter,msg.message,1);
+        addChatPanel(msg.sender,msg.message,1);
     }
+    if(msg.state=='add_friend'){
+        layer.confirm(msg.sender+'想要添加您为好友，是否同意？',{
+            icon:3,
+            title:'好友请求'
+        },function (index) {
+            if($('.tomato_content>ul').length==0){
+                $('.tomato_content').append('<ul class="tomato_friendlist"></ul>')
+            }
+            $('.tomato_friendlist').append("<li>"+msg.sender+"</li>");
+            var message={'state':'confirm_add_friend','sender':username,'accepter':msg.sender};
+            message=JSON.stringify(message);
+            console.log('发送消息'+message);
+            websocket.send(message);
+            layer.close(index);
+        });
+    }
+    if(msg.state=='confirm_add_friend'){
+        console.log($('.tomato_content>ul').length)
+        if($('.tomato_content>ul').length==0){
+            $('.tomato_content').append('<ul class="tomato_friendlist"></ul>')
+        }
+        $('.tomato_friendlist').append("<li>"+msg.sender+"</li>");
+        layer.msg(msg.sender+'同意了您的好友请求！');
+    }
+    // if(msg.state=='userExit'){
+    //     $('.tomato_content>ul>li').each(function (index) {
+    //         if(this.innerText==msg.user){
+    //             $(this).remove();
+    //             return;
+    //         }
+    //     });
+    // }
 };
+$('.layui-icon-face-smile-b>div>p').click(function () {
+    var val=$('#chat'+accepter+' textarea').val()+this.innerText;
+    $('#chat'+accepter+' textarea').val(val);
+});
 function sendMessage(){
-    console.log('accepter'+accepter);
     var message=$('#chat'+accepter+' textarea').val();
+    $('#chat'+accepter+' textarea').val('');
     addChatPanel(username,message,0);
     message={'state':'chat','sender':username,'accepter':accepter,'message':message};
     message=JSON.stringify(message);
@@ -159,20 +207,21 @@ function sendMessage(){
     $(".tomato_chat_panel").eq(1).scrollTop(scrollTop);
 }
 function addChatPanel(name,message,flag){
-    console.log('添加消息到panel');
-    console.log(name);
     if(flag==0){
         message=' <div class="chat_panel_right"><span>:'+name+'</span><span>'+message+'</span><div></div></div>';
     }else{
-        message=' <div class="chat_panel_left"><span>:'+name+'</span><span>'+message+'</span><div></div></div>';
+        message=' <div class="chat_panel_left"><span>'+name+':</span><span>'+message+'</span><div></div></div>';
     }
     $('#chat'+accepter+' .tomato_chat_panel').append(message);
-    $('textarea').val('');
 }
-$('body').off('keypress').on('keypress', function(e) {
+$(document).on('keypress', function(e) {
     if (e.key === 'Enter'){
+        e.preventDefault();
         sendMessage();
     }else{
         $('textarea').focus();
     }
 });
+var str="<p>😀 😁 😂 😃 😄 😅 😆 😉 😊 😋 😎 😍 😘 😗 😙 😚 ☺ 😇 😐 😑 😶 😏 😣 😥 😮 😯 😪 😫 😴 😌 😛 😜 😝 😒 😓 😔 😕 😲 😷 😖 😞 😟 😤 😢 😭 😦 😧 😨 😬 😰 😱 😳 😵 😡 😠</p>";
+str=str.split(' ').join('</p><p>');
+$('.layui-icon-face-smile-b>div').append(str);
