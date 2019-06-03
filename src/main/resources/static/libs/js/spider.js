@@ -34,8 +34,8 @@ var dots = [];
 for (var i = 0; i < 50; i++) {
     var x = Math.random() * canvas.width;
     var y = Math.random() * canvas.height;
-    var xa = Math.random() * 4 - 2;
-    var ya = Math.random() * 4 - 2;
+    var xa = Math.random() * 2 - 1;
+    var ya = Math.random() * 2 - 1;
     xa = xa == 0 ? 1 : xa;
     var R = parseInt(Math.random() * 255);
     var G = parseInt(Math.random() * 255);

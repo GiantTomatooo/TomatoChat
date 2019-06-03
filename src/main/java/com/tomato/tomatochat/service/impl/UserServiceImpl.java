@@ -7,13 +7,14 @@ import com.tomato.tomatochat.mapper.FriendMapper;
 import com.tomato.tomatochat.mapper.UserMapper;
 import com.tomato.tomatochat.service.UserService;
 import com.tomato.tomatochat.utils.R;
+import org.springframework.context.annotation.Scope;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
-
+@Scope("prototype")
 @Service("userService")
 public class UserServiceImpl implements UserService {
     @Resource
@@ -45,5 +46,10 @@ public class UserServiceImpl implements UserService {
             friends.add(userMapper.selectByPrimaryKey(id));
         }
         return friends;
+    }
+
+    @Override
+    public int addFriend(Friend friend) {
+        return friendMapper.insert(friend);
     }
 }

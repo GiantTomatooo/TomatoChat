@@ -51,3 +51,5 @@ public class WebController {
         return userService.getFriends(1);
     }
 }
+
+
